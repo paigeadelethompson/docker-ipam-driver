@@ -150,6 +150,22 @@ impl data_operations<Schema, SchemaDescription> for Schema {
         Ok(ret)
     }
 
+    fn allocate_pool(tags: Vec<String>) -> Result<Selection<Schema>, Box<dyn Error>> {
+        todo!("not implemented for schema")
+    }
+
+    fn allocate_address(network: String) -> Result<Selection<Schema>, Box<dyn Error>> {
+        todo!("not implemented for schema")
+    }
+
+    fn release_pool(network: String) -> Result<(), Box<dyn Error>> {
+        todo!("not implemented for schema")
+    }
+
+    fn release_address(network: String) -> Result<(), Box<dyn Error>> {
+        todo!("not implemented for schema")
+    }
+
     fn is_db_initialized(db: &mut UnQLite) -> Result<bool, Box<dyn Error>> {
         match db.first() {
             None => {

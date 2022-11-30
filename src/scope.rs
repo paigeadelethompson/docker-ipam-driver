@@ -76,6 +76,22 @@ impl data_operations<Scope, ScopeDescription> for Scope {
     }
 
     fn retrieve_all() -> Result<Vec<Selection<Scope>>, Box<dyn Error>> {
+        todo!("Not implemented for Scopes")
+    }
+
+    fn allocate_pool(tags: Vec<String>) -> Result<Selection<Scope>, Box<dyn Error>> {
+        todo!()
+    }
+
+    fn allocate_address(network: String) -> Result<Selection<Scope>, Box<dyn Error>> {
+        todo!()
+    }
+
+    fn release_pool(network: String) -> Result<(), Box<dyn Error>> {
+        todo!()
+    }
+
+    fn release_address(network: String) -> Result<(), Box<dyn Error>> {
         todo!()
     }
 

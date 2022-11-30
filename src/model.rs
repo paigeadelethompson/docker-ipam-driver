@@ -24,6 +24,10 @@ pub trait data_operations<RECORD_TYPE, DESCRIPTION_TYPE> {
     fn save(s: &mut Selection<RECORD_TYPE>, db: &mut UnQLite) -> Result<(), Box<dyn Error>>;
     fn exists_in_database(id: u128) -> Result<bool, Box<dyn Error>>;
     fn retrieve_all() -> Result<Vec<Selection<RECORD_TYPE>>, Box<dyn Error>>;
+    fn allocate_pool(tags: Vec<String>) -> Result<Selection<RECORD_TYPE>, Box<dyn Error>>;
+    fn allocate_address(network: String) -> Result<Selection<RECORD_TYPE>, Box<dyn Error>>;
+    fn release_pool(network: String) -> Result<(), Box<dyn Error>>;
+    fn release_address(network: String) -> Result<(), Box<dyn Error>>;
     fn is_db_initialized(db: &mut UnQLite) -> Result<bool, Box<dyn Error>>;
 }
 

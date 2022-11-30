@@ -36,7 +36,7 @@ fn release_address() -> &'static str {
 pub(crate) fn http_server() {
     rocket::ignite()
     .mount("/IpamDriver.GetDefaultAddressSpaces", routes![get_default_address_spaces])
-    .mount("/IpamDriver.RequestPool", routes![get_default_address_spaces])
-    .mount("/IpamDriver.ReleasePool", routes![get_default_address_spaces])
-    .mount("/IpamDriver.RequestAddress", routes![get_default_address_spaces]);
+    .mount("/IpamDriver.RequestPool", routes![request_pool])
+    .mount("/IpamDriver.ReleasePool", routes![release_pool])
+    .mount("/IpamDriver.RequestAddress", routes![request_address]);
 }
