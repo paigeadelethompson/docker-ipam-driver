@@ -1,0 +1,50 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'docker-ipam-driver'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=docker-ipam-driver",
+                    "--package=docker-ipam-driver"
+                ],
+                "filter": {
+                    "name": "docker-ipam-driver",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "env": { 
+                "SCHEMA_DB_FILE": "/tmp/scheme.db",
+                "SCOPE_DB_FILE": "/tmp/scope.db",
+                "RUST_BACKTRACE": "1"
+            }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'docker-ipam-driver'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=docker-ipam-driver",
+                    "--package=docker-ipam-driver"
+                ],
+                "filter": {
+                    "name": "docker-ipam-driver",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
