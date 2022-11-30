@@ -22,7 +22,7 @@ pub trait data_operations<RECORD_TYPE, DESCRIPTION_TYPE> {
     fn initialize_db(db: &mut UnQLite) -> Result<(), Box<dyn Error>>;
     fn dao() -> Result<UnQLite, Box<dyn Error>>;
     fn save(s: &mut Selection<RECORD_TYPE>, db: &mut UnQLite) -> Result<(), Box<dyn Error>>;
-    fn scope_exists_in_database(id: u128) -> Result<bool, Box<dyn Error>>;
+    fn exists_in_database(id: u128) -> Result<bool, Box<dyn Error>>;
     fn retrieve_all() -> Result<Vec<Selection<RECORD_TYPE>>, Box<dyn Error>>;
     fn is_db_initialized(db: &mut UnQLite) -> Result<bool, Box<dyn Error>>;
 }

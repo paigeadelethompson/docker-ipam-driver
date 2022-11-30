@@ -121,7 +121,7 @@ impl data_operations<Schema, SchemaDescription> for Schema {
         }
     }
 
-    fn scope_exists_in_database(id: u128) -> Result<bool, Box<dyn Error>> {
+    fn exists_in_database(id: u128) -> Result<bool, Box<dyn Error>> {
         todo!()
     }
 
