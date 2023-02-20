@@ -12,4 +12,6 @@ serde = { version = "1.0.147", features = ["derive"]}
 unqlite = "1.5.0"
 rocket = "0.4.5"
 gen-iter = "0.2.1"
+tempfile = "3.3.0"
+log = "0.4.17"
 

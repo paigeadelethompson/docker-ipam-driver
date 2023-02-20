@@ -320,3 +320,78 @@ pub(crate) fn create_initial_scopes(scope_db: &mut UnQLite, schema_db: &mut UnQL
             Ok(())
         }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::schema::*;
+    use tempfile::NamedTempFile;
+    use log::warn;
+        
+    #[test]
+    fn test_schema_dao_no_env() {
+        let result = Schema::dao();
+        assert!(result.is_err())
+    }
+
+    #[test]
+    fn test_schema_dao_with_env() {        
+        let file = NamedTempFile::new().unwrap();
+        std::env::set_var("SCHEMA_DB_FILE", file.into_temp_path());
+        let result = Schema::dao();
+        assert!(result.is_ok())
+    }
+    
+    #[test]
+    fn test_complete_transaction() {
+        
+        let file = NamedTempFile::new().unwrap();
+        std::env::set_var("SCHEMA_DB_FILE", file.into_temp_path());
+        let mut dao = Schema::dao().unwrap();
+
+        match Schema::begin_tx(&mut dao) {
+            Ok(_) => {
+                match Schema::initialize_db(&mut dao) {
+                    Ok(_) => {
+                        match Schema::commit(&mut dao) {
+                            Ok(_) => (),
+                            Err(_) => panic!("failed to commit")
+                        }
+                    },
+                    Err(_) => panic!("initialization failed")
+                }
+            },
+            Err(_) => panic!("failed to begin transaction")
+        }
+    }
+
+    #[test]
+    fn test_begin_tx_within_tx() {
+        
+        let file = NamedTempFile::new().unwrap();
+        std::env::set_var("SCHEMA_DB_FILE", file.into_temp_path());
+        let mut dao = Schema::dao().unwrap();
+
+        match Schema::begin_tx(&mut dao) {
+            Ok(_) => {
+                match Schema::begin_tx(&mut dao) {
+                    Ok(_) => todo!("is this bad or good"),
+                    Err(_) => todo!("is this good or bad"),
+                }
+            }
+            Err(_) => panic!("failed to start a tx")        
+        }
+    }
+
+    #[test]
+    fn test_end_no_tx() {
+        let file = NamedTempFile::new().unwrap();
+        std::env::set_var("SCHEMA_DB_FILE", file.into_temp_path());
+        let mut dao = Schema::dao().unwrap();
+        match Schema::begin_tx(&mut dao) {
+            Ok(_) => todo!("end tx suceeeded but no transaction existed"),
+            Err(_) => (),
+        }
+    }
+
+
+}
