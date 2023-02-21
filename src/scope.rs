@@ -59,7 +59,7 @@ impl data_operations<Scope, ScopeDescription> for Scope {
         }
     }
 
-    fn initialize_db(db: &mut UnQLite) -> Result<(), Box<dyn Error>> {
+    fn initialize_db(_db: &mut UnQLite) -> Result<(), Box<dyn Error>> {
         todo!()
     }
 
@@ -67,11 +67,11 @@ impl data_operations<Scope, ScopeDescription> for Scope {
         Ok(UnQLite::create(std::env::var("SCOPE_DB_FILE")?))
     }
 
-    fn save(s: &mut Selection<Scope>, db: &mut UnQLite) -> Result<(), Box<dyn Error>> {
+    fn save(_s: &mut Selection<Scope>, _db: &mut UnQLite) -> Result<(), Box<dyn Error>> {
         todo!()
     }
 
-    fn exists_in_database(id: u128) -> Result<bool, Box<dyn Error>> {
+    fn exists_in_database(_id: u128) -> Result<bool, Box<dyn Error>> {
         todo!()
     }
 
@@ -79,19 +79,19 @@ impl data_operations<Scope, ScopeDescription> for Scope {
         todo!("Not implemented for Scopes")
     }
 
-    fn allocate_pool(tags: Vec<String>) -> Result<Selection<Scope>, Box<dyn Error>> {
+    fn allocate_pool(_tags: Vec<String>) -> Result<Selection<Scope>, Box<dyn Error>> {
         todo!()
     }
 
-    fn allocate_address(network: String) -> Result<Selection<Scope>, Box<dyn Error>> {
+    fn allocate_address(_network: String) -> Result<Selection<Scope>, Box<dyn Error>> {
         todo!()
     }
 
-    fn release_pool(network: String) -> Result<(), Box<dyn Error>> {
+    fn release_pool(_network: String) -> Result<(), Box<dyn Error>> {
         todo!()
     }
 
-    fn release_address(network: String) -> Result<(), Box<dyn Error>> {
+    fn release_address(_network: String) -> Result<(), Box<dyn Error>> {
         todo!()
     }
 
@@ -108,19 +108,19 @@ impl data_operations<Scope, ScopeDescription> for Scope {
 }
 
 impl factory<Scope, ScopeDescription, Schema, SchemaDescription> for Scope {
-    fn new_from_string(network: String, prefix_length: u8, parent: Option<&mut Selection<Scope>>) -> Result<Selection<Scope>, Box<dyn Error>> {
+    fn new_from_string(_network: String, _prefix_length: u8, _parent: Option<&mut Selection<Scope>>) -> Result<Selection<Scope>, Box<dyn Error>> {
         todo!()
     }
 
-    fn new_from_bytes(network: Vec<u8>, prefix_length: u8, parent: Option<&mut Selection<Scope>>) -> Result<Selection<Scope>, Box<dyn Error>> {
+    fn new_from_bytes(_network: Vec<u8>, _prefix_length: u8, _parent: Option<&mut Selection<Scope>>) -> Result<Selection<Scope>, Box<dyn Error>> {
         todo!()
     }
 
-    fn new_from_proto_scope(network: ProtoScope<IpCidr>, parent: Option<&mut Selection<Scope>>) -> Result<Selection<Scope>, Box<dyn Error>> {
+    fn new_from_proto_scope(_network: ProtoScope<IpCidr>, _parent: Option<&mut Selection<Scope>>) -> Result<Selection<Scope>, Box<dyn Error>> {
         todo!()
     }
 
-    fn new_from_selection(network: Selection<Schema>) -> Result<Selection<Scope>, Box<dyn Error>> {
+    fn new_from_selection(_network: Selection<Schema>) -> Result<Selection<Scope>, Box<dyn Error>> {
         todo!()
     }
 
@@ -132,7 +132,7 @@ impl factory<Scope, ScopeDescription, Schema, SchemaDescription> for Scope {
         todo!()
     }
 
-    fn new_from_json(json: String) -> Result<Selection<Scope>, Box<dyn Error>> {
+    fn new_from_json(_json: String) -> Result<Selection<Scope>, Box<dyn Error>> {
         todo!()
     }
 }

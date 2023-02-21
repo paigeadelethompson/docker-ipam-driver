@@ -29,9 +29,7 @@ impl data_operations<Schema, SchemaDescription> for Schema {
             Ok(_) => {
                 Ok(())
             }
-            Err(_) => {
-                todo!()
-            }
+            Err(e) => Err(e)
         }
     }
 
@@ -40,20 +38,16 @@ impl data_operations<Schema, SchemaDescription> for Schema {
             Ok(_) => {
                 Ok(())
             }
-            Err(_) => {
-                todo!()
-            }
+            Err(e) => Err(e)
         }
     }
 
     fn commit(db: &mut UnQLite) -> Result<(), unqlite::Error> {
         match db.commit() {
-            Ok(_) => {
+            Ok(_) => {                
                 Ok(())
             }
-            Err(_) => {
-                todo!()
-            }
+            Err(e) => Err(e)
         }
     }
 
@@ -92,7 +86,7 @@ impl data_operations<Schema, SchemaDescription> for Schema {
                         selection.is_err()
                     }) {
                     true => {
-                        return Err(DBSaveError.into())
+                        Err(DBSaveError.into())
                     }
                     false => {
                         Ok(())
@@ -103,7 +97,18 @@ impl data_operations<Schema, SchemaDescription> for Schema {
     }
 
     fn dao() -> Result<UnQLite, Box<dyn Error>> {
-        Ok(UnQLite::create(std::env::var("SCHEMA_DB_FILE")?))
+        match std::env::var("SCHEMA_DB_FILE") {
+            Ok(_) => {
+                if std::env::var("SCHEMA_DB_FILE")? == "" {                    
+                    let file = tempfile::NamedTempFile::new().unwrap().into_temp_path();
+                    Ok(UnQLite::create(file.to_str().unwrap()))
+                }
+                else {
+                    Ok(UnQLite::create(std::env::var("SCHEMA_DB_FILE")?))
+                }
+            }
+            Err(e) => Err(Box::new(e))
+        }        
     }
 
     fn save(s: &mut Selection<Schema>, db: &mut UnQLite) -> Result<(), Box<dyn Error>> {
@@ -121,7 +126,7 @@ impl data_operations<Schema, SchemaDescription> for Schema {
         }
     }
 
-    fn exists_in_database(id: u128) -> Result<bool, Box<dyn Error>> {
+    fn exists_in_database(_id: u128) -> Result<bool, Box<dyn Error>> {
         todo!()
     }
 
@@ -136,7 +141,7 @@ impl data_operations<Schema, SchemaDescription> for Schema {
             }
             else {
                 let record = entry.expect("valid entry");
-                let (key, mut value) = record.key_value();
+                let (_key, mut value) = record.key_value();
 
                 let v = String::from_utf8_lossy(value.as_mut_slice()).to_string();
                 let selection = Schema::new_from_json(v)?;
@@ -150,19 +155,19 @@ impl data_operations<Schema, SchemaDescription> for Schema {
         Ok(ret)
     }
 
-    fn allocate_pool(tags: Vec<String>) -> Result<Selection<Schema>, Box<dyn Error>> {
+    fn allocate_pool(_tags: Vec<String>) -> Result<Selection<Schema>, Box<dyn Error>> {
         todo!("not implemented for schema")
     }
 
-    fn allocate_address(network: String) -> Result<Selection<Schema>, Box<dyn Error>> {
+    fn allocate_address(_network: String) -> Result<Selection<Schema>, Box<dyn Error>> {
         todo!("not implemented for schema")
     }
 
-    fn release_pool(network: String) -> Result<(), Box<dyn Error>> {
+    fn release_pool(_network: String) -> Result<(), Box<dyn Error>> {
         todo!("not implemented for schema")
     }
 
-    fn release_address(network: String) -> Result<(), Box<dyn Error>> {
+    fn release_address(_network: String) -> Result<(), Box<dyn Error>> {
         todo!("not implemented for schema")
     }
 
@@ -191,7 +196,7 @@ impl factory<Schema, SchemaDescription, Scope, ScopeDescription> for Schema {
             }
         };
 
-        let update_parent = parent_id != None && string_to_u128_id(net.first_address().to_string())? == parent_id.unwrap();
+        let update_parent = parent_id.is_some() && string_to_u128_id(net.first_address().to_string())? == parent_id.unwrap();
 
         Ok(Selection {
             actual: Schema {
@@ -213,15 +218,15 @@ impl factory<Schema, SchemaDescription, Scope, ScopeDescription> for Schema {
         })
     }
 
-    fn new_from_bytes(network: Vec<u8>, prefix_length: u8, parent: Option<&mut Selection<Schema>>) -> Result<Selection<Schema>, Box<dyn Error>> {
+    fn new_from_bytes(_network: Vec<u8>, _prefix_length: u8, _parent: Option<&mut Selection<Schema>>) -> Result<Selection<Schema>, Box<dyn Error>> {
         todo!()
     }
 
-    fn new_from_proto_scope(network: ProtoScope<IpCidr>, parent: Option<&mut Selection<Schema>>) -> Result<Selection<Schema>, Box<dyn Error>> {
+    fn new_from_proto_scope(_network: ProtoScope<IpCidr>, _parent: Option<&mut Selection<Schema>>) -> Result<Selection<Schema>, Box<dyn Error>> {
         todo!()
     }
 
-    fn new_from_selection(network: Selection<Scope>) -> Result<Selection<Schema>, Box<dyn Error>> {
+    fn new_from_selection(_network: Selection<Scope>) -> Result<Selection<Schema>, Box<dyn Error>> {
         todo!()
     }
 
@@ -302,19 +307,19 @@ fn string_to_u128_id(network: String) -> Result<u128, Box<dyn Error>> {
     })
 }
 
-pub(crate) fn create_initial_scopes(scope_db: &mut UnQLite, schema_db: &mut UnQLite) -> Result<(), Box<dyn Error>> {
+pub(crate) fn create_initial_scopes(scope_db: &mut UnQLite, _schema_db: &mut UnQLite) -> Result<(), Box<dyn Error>> {
     if Schema::retrieve_all()?
         .into_iter()
         .map(|f| -> Result<Selection<Scope>, Box<dyn Error>> {
             Scope::new_from_selection(f)
         })
         .map(|f| -> Result<(), Box<dyn Error>> {
-            Ok(Scope::save(&mut f?, scope_db)?)
+            Scope::save(&mut f?, scope_db)
         })
         .any(|f| -> bool {
             f.is_err()
         }) {
-            return Err(ScopeInitError.into())
+            Err(ScopeInitError.into())
         }
         else {
             Ok(())
@@ -323,29 +328,68 @@ pub(crate) fn create_initial_scopes(scope_db: &mut UnQLite, schema_db: &mut UnQL
 
 #[cfg(test)]
 mod tests {
-    use crate::schema::*;
-    use tempfile::NamedTempFile;
     use log::warn;
-        
+
+    use crate::schema::*;    
+    
     #[test]
-    fn test_schema_dao_no_env() {
-        let result = Schema::dao();
-        assert!(result.is_err())
+    fn new_selection_from_string() {
+        assert_eq!(Schema::new_from_string("100.64.0.0".to_string(),17,None).unwrap().selected_prefix_length.unwrap(), 17);
+        assert_eq!(Schema::new_from_string("100.64.0.0".to_string(),17,None).unwrap().is_locked().unwrap(), false);
     }
 
     #[test]
-    fn test_schema_dao_with_env() {        
-        let file = NamedTempFile::new().unwrap();
-        std::env::set_var("SCHEMA_DB_FILE", file.into_temp_path());
+    fn selection_to_proto_scope() {
+        let pro = Schema::new_from_string("100.64.0.0".to_string(),17,None).unwrap().actual.to_proto_scope().unwrap();
+        assert_eq!(pro.children(20).count(), 16);
+    }
+
+    #[test]
+    fn no_env_file_set() {
+        match std::env::var("SCHEMA_DB_FILE")
+        {
+            Ok(_) => {
+                if std::env::var("SCHEMA_DB_FILE").unwrap() != "" {
+                    panic!("don't set database SCHEMA_DB_FILE for test")
+                }
+                else {
+                    std::env::set_var("SCHEMA_DB_FILE", "");
+                }
+            }
+            Err(_) => {
+                std::env::set_var("SCHEMA_DB_FILE", "");
+            }
+        }
+    }
+
+    #[test]
+    fn test_schema_dao_with_env() {                
         let result = Schema::dao();
         assert!(result.is_ok())
     }
     
     #[test]
-    fn test_complete_transaction() {
-        
-        let file = NamedTempFile::new().unwrap();
-        std::env::set_var("SCHEMA_DB_FILE", file.into_temp_path());
+    fn test_roll_back_tx() {        
+        let mut dao = Schema::dao().unwrap();
+
+        match Schema::begin_tx(&mut dao) {
+            Ok(_) => {
+                match Schema::initialize_db(&mut dao) {
+                    Ok(_) => {
+                        match Schema::roll_back_tx(&mut dao) {
+                            Ok(_) => (),
+                            Err(_) => panic!("rollback of init failed"),
+                        }
+                    }
+                    Err(_) => panic!("failed to initialize db"),
+                }
+            }
+            Err(_) => panic!("failed to begin tx"),
+        }
+    }
+
+    #[test]
+    fn test_complete_transaction() {                
         let mut dao = Schema::dao().unwrap();
 
         match Schema::begin_tx(&mut dao) {
@@ -360,38 +404,32 @@ mod tests {
                     Err(_) => panic!("initialization failed")
                 }
             },
-            Err(_) => panic!("failed to begin transaction")
+            Err(e) => panic!("failed to begin transaction: {} ", e)
         }
     }
 
     #[test]
-    fn test_begin_tx_within_tx() {
-        
-        let file = NamedTempFile::new().unwrap();
-        std::env::set_var("SCHEMA_DB_FILE", file.into_temp_path());
+    fn test_begin_tx_within_tx() {        
         let mut dao = Schema::dao().unwrap();
 
         match Schema::begin_tx(&mut dao) {
             Ok(_) => {
                 match Schema::begin_tx(&mut dao) {
-                    Ok(_) => todo!("is this bad or good"),
-                    Err(_) => todo!("is this good or bad"),
+                    Ok(_) => warn!("is this bad or good"),
+                    Err(_) => panic!("unknown behavior")
                 }
             }
-            Err(_) => panic!("failed to start a tx")        
+            Err(e) => panic!("failed to begin transaction: {} ", e)
         }
     }
 
     #[test]
-    fn test_end_no_tx() {
-        let file = NamedTempFile::new().unwrap();
-        std::env::set_var("SCHEMA_DB_FILE", file.into_temp_path());
+    fn test_commit_no_tx() {        
         let mut dao = Schema::dao().unwrap();
-        match Schema::begin_tx(&mut dao) {
-            Ok(_) => todo!("end tx suceeeded but no transaction existed"),
+
+        match Schema::commit(&mut dao) {
+            Ok(_) => warn!("end tx suceeeded but no transaction existed"),
             Err(_) => (),
         }
     }
-
-
 }

@@ -38,7 +38,7 @@ impl ProtoScope<IpCidr> {
             new_prefix_length);
 
 
-        if self.cidr == None {
+        if self.cidr.is_none() {
             return ret.into_iter();
         }
         else if cur.is_err() {
@@ -46,7 +46,7 @@ impl ProtoScope<IpCidr> {
         }
 
         loop {
-            let mut next = cur.unwrap();
+            let next = cur.unwrap();
             ret.push(ProtoScope::new_type_backed_proto_scope(next).unwrap());
             cur = IpCidr::new(next.last_address(), new_prefix_length);
             if cur.is_err() {

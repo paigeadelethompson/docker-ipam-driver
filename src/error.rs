@@ -22,7 +22,7 @@ impl Error for DBSaveError {
 }
 
 impl Display for SchemaInitError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, _f: &mut Formatter<'_>) -> fmt::Result {
         todo!()
     }
 }
@@ -32,7 +32,7 @@ impl Error for SchemaInitError {
 }
 
 impl Display for ScopeInitError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, _f: &mut Formatter<'_>) -> fmt::Result {
         todo!()
     }
 }
