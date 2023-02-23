@@ -14,9 +14,9 @@ mod interpolate;
 mod error;
 mod http;
 mod database; 
+mod util;
 
 fn main() -> Result<(), Box<dyn Error>> {
     initialize_databases()?;
-
     Ok(())
 }
